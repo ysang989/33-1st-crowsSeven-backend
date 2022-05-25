@@ -49,10 +49,15 @@ class Product(models.Model):
     product_category    = models.ForeignKey('ProductCategory', on_delete=models.CASCADE)
     the_newest          = models.BooleanField(default=False)
     material            = models.ManyToManyField('Material')
+    detail_image_url    = models.ForeignKey('DetailImage', on_delete=models.CASCADE)
 
     class Meta:
         db_table='product'
 
+class DetailImage(models.Model):
+    detail_image_url = models.URLField(max_length=200)
 
+    class Meta:
+        db_table='detailimage'
 
 
