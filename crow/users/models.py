@@ -9,7 +9,7 @@ class TimeStampedModel(models.Model):
 
 class User(TimeStampedModel):
     name                    = models.CharField(max_length=10)
-    ID                      = models.CharField(max_length=30, unique=True)
+    username                = models.CharField(max_length=30, unique=True)
     password                = models.CharField(max_length=120)
     address                 = models.CharField(max_length=120)
     phone_number            = models.IntegerField()
