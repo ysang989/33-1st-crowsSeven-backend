@@ -14,14 +14,8 @@ class User(TimeStampedModel):
     address                 = models.CharField(max_length=120)
     phone_number            = models.IntegerField()
     birth_date              = models.DateField()
+    optional_agreement      = models.BooleanField(default=0)
     email                   = models.CharField(max_length=30)
 
     class Meta:
         db_table='users'
-
-class OptionalAgreement(models.Model):
-    user  = models.ForeignKey('User', on_delete=models.CASCADE)
-    title = models.BooleanField(default=0)
-
-    class Meta:
-        db_table='optional_agreements'
