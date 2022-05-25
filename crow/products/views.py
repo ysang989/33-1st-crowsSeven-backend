@@ -1,5 +1,3 @@
-import json
+from django.shortcuts import render
 
-from django.views       import View
-
-from products.models    import User
+# Create your views here.
