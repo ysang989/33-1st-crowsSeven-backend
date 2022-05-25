@@ -20,9 +20,9 @@ class ShoeSize(models.Model):
 
 class OptionProduct(models.Model):
     product    = models.ForeignKey('Product', on_delete=models.CASCADE)
-    shoesize   = models.ForeignKey('ShoeSize', on_delete=models.CASCADE)
-    phonetype  = models.ForeignKey('PhoneType', on_delete=models.CASCADE)
-    airpottype = models.ForeignKey('AirpotType', on_delete=models.CASCADE)
+    shoesize   = models.ForeignKey('ShoeSize', on_delete=models.CASCADE, null=True)
+    phonetype  = models.ForeignKey('PhoneType', on_delete=models.CASCADE, null=True)
+    airpottype = models.ForeignKey('AirpotType', on_delete=models.CASCADE, null=True)
     stock      = models.IntegerField(default=0)
 
     class Meta:
