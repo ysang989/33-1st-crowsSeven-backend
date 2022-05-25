@@ -8,5 +8,4 @@ class Cart(TimeStampedModel):
     option_product = models.ForeignKey('products.OptionProduct', on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "carts"
-    
+        db_table = "carts"    
