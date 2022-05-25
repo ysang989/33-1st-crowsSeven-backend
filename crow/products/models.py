@@ -42,19 +42,19 @@ class ProductCategory(models.Model):
 
 class Product(models.Model):
     name                = models.CharField(max_length=50)
-    width               = models.DecimalField(max_digits=10, decimal_places=5, null=True)
-    weight              = models.DecimalField(max_digits=10, decimal_places=5, null=True)
-    price               = models.DecimalField(max_digits=10, decimal_places=5)
+    width               = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    weight              = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    price               = models.DecimalField(max_digits=5, decimal_places=2)
     thumbnail_image_url = models.URLField(max_length=200)
     product_category    = models.ForeignKey('ProductCategory', on_delete=models.CASCADE)
     the_newest          = models.BooleanField(default=False)
     material            = models.ManyToManyField('Material')
-    detail_image_url    = models.ForeignKey('DetailImage', on_delete=models.CASCADE)
 
     class Meta:
         db_table='products'
 
 class DetailImage(models.Model):
+    product          = models.ForeignKey('Product', on_delete=models.CASCADE)
     detail_image_url = models.URLField(max_length=200)
 
     class Meta:

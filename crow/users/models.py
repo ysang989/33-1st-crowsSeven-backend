@@ -9,12 +9,12 @@ class TimeStampedModel(models.Model):
 
 class User(TimeStampedModel):
     name                    = models.CharField(max_length=10)
-    ID                      = models.CharField(max_length=30)
+    ID                      = models.CharField(max_length=30, unique=True)
     password                = models.CharField(max_length=120)
     address                 = models.CharField(max_length=120)
     phone_number            = models.IntegerField()
     birth_date              = models.DateField()
-    email_agreement         = models.JSONField()
+    optional_agreement      = models.JSONField()
     email                   = models.CharField(max_length=30)
 
     class Meta:
