@@ -42,6 +42,7 @@ class ProductCategory(models.Model):
 
 class Product(models.Model):
     name                = models.CharField(max_length=50)
+    description         = models.TextField(max_length=300)
     width               = models.DecimalField(max_digits=6,decimal_places=3, null=True)
     weight              = models.DecimalField(max_digits=6,decimal_places=3, null=True)
     price               = models.DecimalField(max_digits=8,decimal_places=2, null=True)
