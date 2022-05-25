@@ -19,9 +19,3 @@ class User(TimeStampedModel):
 
     class Meta:
         db_table='users'
-
-class MainImage(models.Model):
-    main_image_url = models.URLField(max_length=200)
-
-    class Meta:
-        db_table = "main_images"
