@@ -42,9 +42,9 @@ class ProductCategory(models.Model):
 
 class Product(models.Model):
     name                = models.CharField(max_length=50)
-    width               = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    weight              = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    price               = models.DecimalField(max_digits=5, decimal_places=2)
+    width               = models.DecimalField(max_digits=6,decimal_places=3, null=True)
+    weight              = models.DecimalField(max_digits=6,decimal_places=3, null=True)
+    price               = models.DecimalField(max_digits=8,decimal_places=2, null=True)
     thumbnail_image_url = models.URLField(max_length=200)
     product_category    = models.ForeignKey('ProductCategory', on_delete=models.CASCADE)
     the_newest          = models.BooleanField(default=False)
