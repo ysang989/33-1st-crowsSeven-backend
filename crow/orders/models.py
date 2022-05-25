@@ -6,19 +6,20 @@ class OrderStatus(models.Model):
     status = models.CharField(max_length=40)
 
     class Meta:
-        db_table = "orderstatus"
+        db_table = "order_status"
 
 class PaymentMethod(models.Model):
     payment = models.CharField(max_length=100)
 
     class Meta:
-        db_table = "paymentmethod"
+        db_table = "payment_methods"
 
 class DeliveryAddress(models.Model):
-    deliveryaddress = models.CharField(max_length=200)
+    user             = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    delivery_address = models.CharField(max_length=200)
 
     class Meta:
-        db_table = "deliveryaddress"
+        db_table = "delivery_addresses"
 
 class Order(TimeStampedModel):
     user                     = models.ForeignKey('users.User', on_delete=models.CASCADE)
@@ -29,7 +30,7 @@ class Order(TimeStampedModel):
     order_number             = models.CharField(max_length=50)
 
     class Meta:
-        db_table = "order"
+        db_table = "orders"
 
 class PresentDeliveryAddress(models.Model):
     delivery_address    = models.CharField(max_length=300)
@@ -39,13 +40,13 @@ class PresentDeliveryAddress(models.Model):
     delivery_message    = models.TextField(max_length=200, null=True)
 
     class Meta:
-        db_table = 'presentdeliveryaddress'
+        db_table = 'present_delivery_addresses'
 
 class OrderItemStatus(models.Model):
-    itemstatus = models.CharField(max_length=10)
+    item_status = models.CharField(max_length=10)
 
     class Meta:
-        db_table = 'orderitemstatus'
+        db_table = 'order_item_status'
 
 class OrderItem(models.Model):
     option_product    = models.ForeignKey('products.OptionProduct', on_delete=models.CASCADE)
@@ -56,5 +57,5 @@ class OrderItem(models.Model):
     count             = models.IntegerField(default=0)
 
     class Meta:
-        db_table = "orderitem"
+        db_table = "order_items"
 

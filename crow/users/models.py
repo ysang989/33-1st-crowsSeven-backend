@@ -18,10 +18,10 @@ class User(TimeStampedModel):
     email                   = models.CharField(max_length=30)
 
     class Meta:
-        db_table='user'
+        db_table='users'
 
 class MainImage(models.Model):
     main_image_url = models.URLField(max_length=200)
 
     class Meta:
-        db_table = "mainimage"
+        db_table = "main_images"
