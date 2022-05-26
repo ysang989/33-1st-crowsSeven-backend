@@ -23,7 +23,8 @@ class ProductDetailView(View):
             results            = []
             option_information = []
 
-            option_products = OptionProduct.objects.filter(product_id = id)
+            option_products  = OptionProduct.objects.filter(product_id = id)
+            option_existence = True
 
             count_per_shoe_size   = {}
             count_per_airpot_type = {}
@@ -45,15 +46,13 @@ class ProductDetailView(View):
                 option_information.append({
                     '단일재고': OptionProduct.objects.get(product_id=id).stock
                 })
-                option_products = Product(optiona_existence=1)
-                option_products.save()
+                option_existence=False
                 
             option_information.append({
                 '아이폰기종별재고': count_per_phone_type,
                 '에어팟기종별재고': count_per_airpot_type,
                 '신발사이즈별재고': count_per_shoe_size,
             })
-            option_products[0].product.optiona_existence = 1
             
             results.append({
             '제품이름' : option_products[0].product.name,
@@ -62,7 +61,7 @@ class ProductDetailView(View):
             '신상여부' : option_products[0].product.the_newest,
             '제품가격' : option_products[0].product.price,
             '옵션정보' : option_information,
-            '옵션유무' : option_products[0].product.optiona_existence
+            '옵션유무' : option_existence
             })
 
             return JsonResponse({"message" : results}, status=200)
