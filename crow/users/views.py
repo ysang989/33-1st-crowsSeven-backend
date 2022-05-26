@@ -1,4 +1,4 @@
-import json,re,bcrypt,jwt
+import json, re, bcrypt, jwt
 
 from django.views import View
 from django.http  import JsonResponse
@@ -27,19 +27,19 @@ class SignupView(View):
             REGEX_BIRTHDATE   = '^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$'
 
             if not re.match(REGEX_USERNAME, username):
-                return JsonResponse({"message":"아이디 형식에 영문소문자/숫자, 4~16자가 포함되어야합니다."}, status=400)
+                return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
 
             if not re.match(REGEX_EMAIL, email):
-                return JsonResponse({"maessage":"이메일 형식에 @와 .이 포함되어있지않습니다."}, status=400)
+                return JsonResponse({"maessage":"INVALID_PASSWORD."}, status=400)
  
             if not re.match(REGEX_PASSWORD, password):
-                return JsonResponse({"message":"비밀번호 형식에 영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 8자~16자 포함되어야합니다."}, status=400)
+                return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
 
             if not re.match(REGEX_PHONENUMBER, phone_number):
-                return JsonResponse({"message":"휴대전화 형식에 숫자 10~11자리만 포함되어야합니다."}, status=400)
+                return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
 
             if not re.match(REGEX_BIRTHDATE, birth_date):
-                return JsonResponse({"message":"생년월일 형식에 8자리만 포함되어야합니다."}, status=400)
+                return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
             
             if User.objects.filter(username=username).exists():
                 return JsonResponse({"message":"이미 회원가입된 이메일입니다."}, status=400)
