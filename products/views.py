@@ -13,53 +13,49 @@ from products.models    import (
 )
 
 class ProductDetailView(View):
-    def get(self, request, id):
+    def get(self, request, product_id):
         try:
-            results            = []
-            option_information = []
-
-            option_products  = OptionProduct.objects.filter(product_id = id)
+            product          = Product.objects.get(id=product_id)
+            option_products  = OptionProduct.objects.filter(product_id=product_id)
             option_existence = True
 
             count_per_shoe_size   = {}
             count_per_airpot_type = {}
             count_per_phone_type  = {}
-            
-            for shoe_size in range(1,len(ShoeSize.objects.all())+1):
-                for option_product in option_products.filter(shoe_size=shoe_size):
-                    count_per_shoe_size[option_product.shoe_size.size] = option_products.get(shoe_size = shoe_size).stock
 
-            for airpot_type in range(1,len(AirpotType.objects.all())+1):
-                for option_product in option_products.filter(airpot_type = airpot_type):
-                    count_per_airpot_type[option_product.airpot_type.name] = option_products.get(airpot_type = airpot_type).stock
-
-            for phone_type in range(1,len(PhoneType.objects.all())+1):
-                for option_product in option_products.filter(phone_type = phone_type):
-                    count_per_phone_type[option_product.phone_type.name] = option_products.get(phone_type = phone_type).stock
+            for option_product in option_products:
+                if option_product.airpot_type:
+                    count_per_shoe_size[option_product.airpot_type.name]=option_product.stock
+                else:
+                    pass
+                if option_product.phone_type:
+                    count_per_shoe_size[option_product.phone_type.name]=option_product.stock
+                else:
+                    pass
+                if option_product.shoe_size:
+                    count_per_shoe_size[option_product.shoe_size.size]=option_product.stock
+                else:
+                    pass
             
-            if not option_products[0].shoe_size and not option_products[0].airpot_type and not option_products[0].phone_type:
-                option_information.append({
-                    'single_product': OptionProduct.objects.get(product_id=id).stock
-                })
-                option_existence=False
-                
-            option_information.append({
-                'count_per_phone_type' : count_per_phone_type,
-                'count_per_airpot_type': count_per_airpot_type,
-                'count_per_shoe_size'  : count_per_shoe_size,
-            })
-            
-            results.append({
-            'name'               : option_products[0].product.name,
-            'description'        : option_products[0].product.description,
-            'thumbnail_image_url': option_products[0].product.thumbnail_image_url,
-            'the_newest'         : option_products[0].product.the_newest,
-            'price'              : option_products[0].product.price,
-            'option_information' : option_information,
-            'option_existence'   : option_existence
-            })
+            results={
+                'id'                 : product.id,
+                'name'               : product.name,
+                'description'        : product.description,
+                'thumbnail_image_url': product.thumbnail_image_url,
+                'the_newest'         : product.the_newest,
+                'price'              : product.price,
+                'option_type' : {'count_per_shoe_size': count_per_shoe_size,
+                                'count_per_airpot_type' : count_per_airpot_type,
+                                'count_per_phone_type' :  count_per_phone_type
+                                },
+                'option_existence'  : option_existence
+            }
 
-            return JsonResponse({"message" : results}, status=200)
+            if not option_product.shoe_size and not option_product.airpot_type and not option_product.phone_type:
+                results['single_product']= option_product.stock
+                results['option_existence']=False
+           
+            return JsonResponse({'results' : results}, status=200)
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
