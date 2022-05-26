@@ -25,38 +25,38 @@ class ProductDetailView(View):
             count_per_airpot_type = {}
             count_per_phone_type  = {}
             
-            for i in range(1,len(ShoeSize.objects.all())+1):
-                for j in option_products.filter(shoe_size=i):
-                    count_per_shoe_size[j.shoe_size.size] = option_products.get(shoe_size = i).stock
+            for shoe_size in range(1,len(ShoeSize.objects.all())+1):
+                for option_product in option_products.filter(shoe_size=shoe_size):
+                    count_per_shoe_size[option_product.shoe_size.size] = option_products.get(shoe_size = i).stock
 
-            for i in range(1,len(AirpotType.objects.all())+1):
-                for j in option_products.filter(airpot_type = i):
-                    count_per_airpot_type[j.airpot_type.name] = option_products.get(airpot_type = i).stock
+            for airpot_type in range(1,len(AirpotType.objects.all())+1):
+                for option_product in option_products.filter(airpot_type = airpot_type):
+                    count_per_airpot_type[option_product.airpot_type.name] = option_products.get(airpot_type = i).stock
 
-            for i in range(1,len(PhoneType.objects.all())+1):
-                for j in option_products.filter(phone_type = i):
-                    count_per_phone_type[j.phone_type.name] = option_products.get(phone_type = i).stock
+            for phone_type in range(1,len(PhoneType.objects.all())+1):
+                for option_product in option_products.filter(phone_type = i):
+                    count_per_phone_type[option_product.phone_type.name] = option_products.get(phone_type = i).stock
             
             if not option_products[0].shoe_size and not option_products[0].airpot_type and not option_products[0].phone_type:
                 option_information.append({
-                    '단일재고': OptionProduct.objects.get(product_id=id).stock
+                    'single_product': OptionProduct.objects.get(product_id=id).stock
                 })
                 option_existence=False
                 
             option_information.append({
-                '아이폰기종별재고': count_per_phone_type,
-                '에어팟기종별재고': count_per_airpot_type,
-                '신발사이즈별재고': count_per_shoe_size,
+                'count_per_phone_type': count_per_phone_type,
+                'count_per_airpot_type': count_per_airpot_type,
+                'count_per_shoe_size': count_per_shoe_size,
             })
             
             results.append({
-            '제품이름' : option_products[0].product.name,
-            '제품설명' : option_products[0].product.description,
-            '제품이미지': option_products[0].product.thumbnail_image_url,
-            '신상여부' : option_products[0].product.the_newest,
-            '제품가격' : option_products[0].product.price,
-            '옵션정보' : option_information,
-            '옵션유무' : option_existence
+            'name'               : option_products[0].product.name,
+            'description'        : option_products[0].product.description,
+            'thumbnail_image_url': option_products[0].product.thumbnail_image_url,
+            'the_newest'         : option_products[0].product.the_newest,
+            'price'              : option_products[0].product.price,
+            'option_information' : option_information,
+            'option_existence'   : option_existence
             })
 
             return JsonResponse({"message" : results}, status=200)
