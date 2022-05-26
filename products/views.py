@@ -34,7 +34,7 @@ class ProductDetailView(View):
                     count_per_airpot_type[option_product.airpot_type.name] = option_products.get(airpot_type = i).stock
 
             for phone_type in range(1,len(PhoneType.objects.all())+1):
-                for option_product in option_products.filter(phone_type = i):
+                for option_product in option_products.filter(phone_type = phone_type):
                     count_per_phone_type[option_product.phone_type.name] = option_products.get(phone_type = i).stock
             
             if not option_products[0].shoe_size and not option_products[0].airpot_type and not option_products[0].phone_type:
@@ -44,9 +44,9 @@ class ProductDetailView(View):
                 option_existence=False
                 
             option_information.append({
-                'count_per_phone_type': count_per_phone_type,
+                'count_per_phone_type' : count_per_phone_type,
                 'count_per_airpot_type': count_per_airpot_type,
-                'count_per_shoe_size': count_per_shoe_size,
+                'count_per_shoe_size'  : count_per_shoe_size,
             })
             
             results.append({
