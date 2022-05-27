@@ -1,11 +1,10 @@
 import jwt
 import json
 
-
 from django.http    import JsonResponse
+from django.conf    import settings
 
 from users.models   import User
-from my_settings    import SECRET_KEY
 
 def login_decorator(func):
     def wrapper(self, request, *args, **kwargs):
