@@ -10,22 +10,21 @@ from users.utils        import jwt_expression
 
 class ReviewView(View):
     @jwt_expression
-    def post(self, request, product_id):
+    def post(self, request, option_product_id):
         try:
             data = json.loads(request.body)
-
-            user           = request.user
+            user           = User.objects.get(id=request.user)
             title          = data["title"]
             context        = data["context"]
             password       = data["password"]
-            option_product = Product.objects.get(id = product_id).id
+            option_product = OptionProduct.objects.get(id = option_product_id)
 
             Review.objects.create(
                 user           = user,
                 title          = title,
                 context        = context,
                 password       = password,
-                viewpoint      = 0,
+                view_count     = 0,
                 option_product = option_product
             )
 
@@ -33,6 +32,11 @@ class ReviewView(View):
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+        
+        except option_product.exists():
+            return JsonResponse({"message" : "ALREADY_EXISTS"}, status=400)
+
+
         
 #     def get(self, request, id):
 #             try:
