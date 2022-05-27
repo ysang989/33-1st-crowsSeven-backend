@@ -23,24 +23,24 @@ class SignupView(View):
 
             REGEX_USERNAME    = '[a-z0-9]{4,16}$'
             REGEX_EMAIL       = '[a-zA-Z0-9_-]+@[a-z]+.[a-z]+$'
-            REGEX_PASSWORD    = '^(?!((?:[A-Za-z]+)|(?:[~!@#$%^&*()_+=]+)|(?=[0-9]+))$)[A-Za-z\d~!@#$%^&*()_+=]{8,16}$'
-            REGEX_PHONENUMBER = '\d{7,8}'
+            REGEX_PASSWORD    = '^[A-Za-z0-9]{4,16}$'
+            REGEX_PHONENUMBER = '\d{10,11}'
             REGEX_BIRTHDATE   = '^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$'
 
             if not re.match(REGEX_USERNAME, username):
-                return JsonResponse({"message":"INVAID_PASSWORD"}, status=400)
+                return JsonResponse({"message":"INVALID_USERNAME"}, status=400)
 
             if not re.match(REGEX_EMAIL, email):
-                return JsonResponse({"maessage":"INVALID_PASSWORD"}, status=400)
+                return JsonResponse({"maessage":"INVALID_EMAIL"}, status=400)
  
             if not re.match(REGEX_PASSWORD, password):
                 return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
 
             if not re.match(REGEX_PHONENUMBER, phone_number):
-                return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
+                return JsonResponse({"message":"INVALID_PHONENUMBER"}, status=400)
 
             if not re.match(REGEX_BIRTHDATE, birth_date):
-                return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
+                return JsonResponse({"message":"INVALID_BIRTHDATE"}, status=400)
             
             if User.objects.filter(username=username).exists():
                 return JsonResponse({"message":"이미 회원가입된 이메일입니다."}, status=400)
