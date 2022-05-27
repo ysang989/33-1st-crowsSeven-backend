@@ -46,9 +46,9 @@ class ProductDetailView(View):
                     option_type = 'airpot_type'
                     option_name = option_product.airpot_type.name
                     option_list.append({
-                        'option_name' : option_name if option_name else None,
-                        'stock'       : option_product.stock,
-                        'option_product_id'   : option_product.id
+                        'option_name'      : option_name if option_name else None,
+                        'stock'            : option_product.stock,
+                        'option_product_id': option_product.id
                     })
 
             results={
