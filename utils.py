@@ -12,14 +12,14 @@ def login_decorator(func):
         try:
             access_token = request.headers.get("Authrozation", None)
             payload      = jwt.decode(access_token, SECRET_KEY, algorithms = "HS256")
-            user         = User.objects.get(username = payload["username"])
+            user         = User.objects.get(id = payload["id"])
             request.user = user
 
         except jwt.exceptions.DecodeError:
             return JsonResponse({"message" : "INVALID TOKEN"}, status = 400)
 
         except User.DoesNotExist:
-            return JsonResponse({"message" : "THIS ACCOUNT DOES NOT EXIST"}, status = 400)
+            return JsonResponse({"message" : "INVAILD_USER"}, status = 400)
 
         return func(self, request, *args, **kwargs)
     return wrapper
