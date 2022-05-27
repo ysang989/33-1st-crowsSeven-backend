@@ -18,7 +18,6 @@ class ReviewView(View):
             context        = data["context"]
             password       = data["password"]
             option_product = OptionProduct.objects.get(id = option_product_id)
-
            
             Review.objects.create(
                     user           = user,
@@ -28,41 +27,44 @@ class ReviewView(View):
                     view_count     = 0,
                     option_product = option_product
                     )
-        
 
             return JsonResponse({"message" : "SUCCESS"}, status=200)
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
-    
-
-
-        
-        # except Review.objects.get(option_product=option_product).Exist:
-        #     return JsonResponse({"message" : "ALREADY_EXISTS"}, status=400)
-
-
-        
     def get(self, request, option_product_id):
             try:
                 results = []
-                review = Review.objects.get(option_product_id=option_product_id)
+                review  = Review.objects.get(option_product_id=option_product_id)
                 
-                comments = {}
+                comments = []
                 
                 for comment in Comment.objects.select_related('review').filter(review_id=review.id):
-                    comments[comment.name]= comment.content
+                    comments.append({
+                        'comment_writer'    : comment.user.name,
+                        'comment_created_at': comment.created_at,
+                        'content'           : comment.content
+                    })
                                     
                 if Review.objects.filter(option_product_id=option_product_id).exists():
                     review.view_count = review.view_count+1
                     review.save()
+                
+                product = []
+                product.append({
+                    'product_name'           : OptionProduct.objects.get(id=option_product_id).product.name,
+                    'product_price'          : OptionProduct.objects.get(id=option_product_id).product.price,
+                    'product_thumbnail_image': OptionProduct.objects.get(id=option_product_id).product.thumbnail_image_url
+                })
 
                 results.append({
-                    '제목' : review.title,
-                    '작성일': review.created_at,
-                    '조회수': review.view_count,
-                    '댓글' : comments,
+                    'title'           : review.title,
+                    'review_writer'   : review.user.name, 
+                    'title_created_at': review.created_at,
+                    'view_count'      : review.view_count,
+                    'comment'         : comments,
+                    'product'         : product
                 })
 
                 return JsonResponse({"message" : results}, status=200)
@@ -84,7 +86,7 @@ class CommentView(View):
 
             Comment.objects.create(
                 user     = user,
-                review    = review,
+                review   = review,
                 name     = name,
                 content  = content,
                 password = password
