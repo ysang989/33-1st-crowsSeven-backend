@@ -24,11 +24,11 @@ class SignupView(View):
             REGEX_USERNAME    = '[a-z0-9]{4,16}$'
             REGEX_EMAIL       = '[a-zA-Z0-9_-]+@[a-z]+.[a-z]+$'
             REGEX_PASSWORD    = '^(?!((?:[A-Za-z]+)|(?:[~!@#$%^&*()_+=]+)|(?=[0-9]+))$)[A-Za-z\d~!@#$%^&*()_+=]{8,16}$'
-            REGEX_PHONENUMBER = '\d{10,11}'
+            REGEX_PHONENUMBER = '\d{7,8}'
             REGEX_BIRTHDATE   = '^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$'
 
             if not re.match(REGEX_USERNAME, username):
-                return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
+                return JsonResponse({"message":"INVAID_PASSWORD"}, status=400)
 
             if not re.match(REGEX_EMAIL, email):
                 return JsonResponse({"maessage":"INVALID_PASSWORD"}, status=400)
@@ -61,3 +61,25 @@ class SignupView(View):
         
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
+
+class LoginView(View):
+    def post(self,request):
+        try:
+            input_data = json.loads(request.body)
+
+            username = input_data["username"]
+            password = input_data["password"]
+
+
+            user = User.objects.get(username=username)
+            if not bcrypt.checkpw(password.encode("UTF-8"), user.password.encode("UTF-8")):
+                return JsonResponse({"messange": "INVALID_PASSWORD"}, status=401)
+
+            access_token = jwt.encode({"id" : user.id}, settings.SECRET_KEY, settings.ALGORITHM)
+            return JsonResponse({"access_token": access_token}, status=200) 
+
+        except KeyError:
+            return JsonResponse({"message": "KEY_ERROR"}, status=400)
+        
+        except User.DoesNotExist:
+            return JsonResponse({"message": "INVALID_USER"},status=401)
