@@ -18,10 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path("products", include("products.urls")),
-=======
-from django.urls import path, include
-
-urlpatterns = [
     path("users", include("users.urls"))
->>>>>>> main
 ]
