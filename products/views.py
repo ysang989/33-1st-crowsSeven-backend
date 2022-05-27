@@ -21,12 +21,11 @@ class ProductDetailView(View):
 
             if OptionProduct.objects.filter(Q(product_id=product_id) & Q(shoe_size_id=None) & Q(phone_type_id=None) & Q(airpot_type_id=None)):
                 option_existence = False
-                
+
             else: 
                 option_existence = True
             
             option_list = {}
-
             option_type = option_products[0]
 
             if option_type.shoe_size:
@@ -62,6 +61,7 @@ class ProductDetailView(View):
             }
 
             return JsonResponse({'message' : results}, status=200)
+            
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
