@@ -126,23 +126,31 @@ class WholeReviewView(View):
     def get(self, request):
         try:
 
-            results.append
+            review_list = Review.objects.order_by("-created_at")
 
-            results.append
-      
-            return JsonResponse({"message" : results}, status=200)
+            review_list =[{
+                "review_id"        : review.id,
+                "review_product"   : review.product.name,
+                "review_title"     : review.title,
+                "review_thumb_nail": review.product.thumbnail_image_url,
+                "review_name"      : review.user.username,
+                "review_date"      : review.updated_at,
+                "review_view_count": review.view_count
+            } for review in reviews]
+
+            return JsonResponse({"message" : review_list}, status=200)
 
         except KeyError :
-                return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
-class ReviewSearchView(View):
+class ReviewSearchView(View): 
     def get(self, request):
         try:
             search_keyword = request.GET.get('q', None)
             search_time_keyword = request.GET.get('time', None)
             search_type = request.GET.get('type', None)
 
-            review_list = Review.objects.order_by("-created_at")
+            reviews = Review.objects.order_by("-created_at")
 
             if search_time_keyword == '5분':
                 q &= Q(created_at__lt = datetime.datetime.now() - datetime.timedelta(minutes=5))
@@ -163,28 +171,31 @@ class ReviewSearchView(View):
                 q &= Q(context__icontains= search_keyword )
             
             if search_time_keyword == '글쓴이':
-                q &= Q(user__user_id__icontains = search_keyword )
+                q &= Q(user_id__user__icontains = search_keyword )
             
             if search_time_keyword == '아이디':
                 q &= Q(id__icontains = search_keyword )
 
             if search_time_keyword == '상품정보':
-                q &= Q(product__product_id__icontains = search_keyword )
+                q &= Q(product_id__products__icontains = search_keyword)
 
-            reviews = review_list.filter(q).distinct()
+            searched_reviews = reviews.filter(q).distinct()
 
             review_list =[{
-                "review_id"  : review.id,
-                "review_":fasdf,
+                "review_id"        : review.id,
+                "review_product"   : review.product.name,
+                "review_title"     : review.title,
+                "review_thumb_nail": review.product.thumbnail_image_url,
+                "review_name"      : review.user.username,
+                "review_date"      : review.updated_at,
+                "review_view_count": review.view_count
+            } for review in searched_reviews]
 
-            } for review in reviews]
-
-            return JsonResponse({"message" : q}, status=200)
+            return JsonResponse({"message" : review_list}, status=200)
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
         
-
 class CommentView(View):
     @jwt_expression
     def post(self, request, review_id):
