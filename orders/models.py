@@ -25,7 +25,6 @@ class Order(TimeStampedModel):
     user                     = models.ForeignKey('users.User', on_delete=models.CASCADE)
     present_delivery_address = models.ForeignKey('PresentDeliveryAddress', on_delete=models.CASCADE)
     order_status             = models.ForeignKey('OrderStatus', on_delete=models.CASCADE)
-    count                    = models.IntegerField(default=0)
     shopping_fee             = models.IntegerField(default=3000)
     order_number             = models.CharField(max_length=50)
 
