@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import ReviewView, CommentView
+from .views import ReviewView, ReviewDetailView
 
 urlpatterns = [
-    path("/review/<int:option_product_id>", ReviewView.as_view()),
-    path("/review/<int:option_product_id>/comment", CommentView.as_view()),
+    path("/", ReviewView.as_view()),
+    path("/<int:review_id>", ReviewDetailView.as_view())
 ]
