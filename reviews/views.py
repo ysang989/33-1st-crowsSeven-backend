@@ -126,7 +126,7 @@ class WholeReviewView(View):
     def get(self, request):
         try:
 
-            review_list = Review.objects.order_by("-created_at")
+            reviews = Review.objects.order_by("-created_at")
 
             review_list =[{
                 "review_id"        : review.id,
