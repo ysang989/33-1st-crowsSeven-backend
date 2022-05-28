@@ -50,7 +50,7 @@ class Product(models.Model):
     product_category    = models.ForeignKey('ProductCategory', on_delete=models.CASCADE)
     the_newest          = models.BooleanField(default=False)
     material            = models.ManyToManyField('Material')
-    optiona_existence   = models.BooleanField(default=0)
+    optional_existence   = models.BooleanField(default=0)
 
     class Meta:
         db_table='products'
