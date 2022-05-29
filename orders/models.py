@@ -27,6 +27,7 @@ class Order(TimeStampedModel):
     order_status             = models.ForeignKey('OrderStatus', on_delete=models.CASCADE)
     shopping_fee             = models.IntegerField(default=3000)
     order_number             = models.CharField(max_length=50)
+    paymentmethod            = models.ForeignKey('PaymentMethod', on_delete=models.CASCADE, default=1)
 
     class Meta:
         db_table = "orders"
