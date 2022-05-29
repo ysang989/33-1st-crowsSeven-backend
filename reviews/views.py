@@ -1,3 +1,40 @@
-from django.shortcuts import render
+import json
+import datetime
 
-# Create your views here.
+from django.views       import View
+from django.http        import JsonResponse
+from django.db.models   import Q
+
+from reviews.models     import Review
+from products.models    import Product
+from users.models       import User
+from users.utils        import jwt_expression
+
+class ReviewView(View):
+    @jwt_expression
+    def post(self, request):
+        try:
+            data     = json.loads(request.body)
+            user     = User.objects.get(id=request.user)
+            title    = data["title"]
+            context  = data["context"]
+            password = data["password"]
+            product  = data["product"]
+            product  = Product.objects.get(name=product)
+
+            if Review.objects.filter(Q(product_id=product)&Q(user_id=user.id)).exists():
+                return JsonResponse({'message':'REVIEW_ALREADY_EXIST'}, status=404)
+
+            Review.objects.create(
+                user       = user,
+                title      = title,
+                context    = context,
+                password   = password,
+                view_count = 0,
+                product    = product2
+            )
+
+            return JsonResponse({"message" : "SUCCESS"}, status=200)
+
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
