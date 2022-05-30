@@ -24,7 +24,7 @@ class ReviewView(View):
         
             if Review.objects.filter(Q(product_id=product)&Q(user_id=user.id)).exists():
                 return JsonResponse({'message':'REVIEW_ALREADY_EXIST'}, status=404)
-
+            
             Review.objects.create(
                 user       = user,
                 title      = title,
