@@ -19,7 +19,7 @@ class ReviewView(View):
             title      = data["title"]
             context    = data["context"]
             password   = data["password"]
-            product    = data["product"]
+            product_    = data["product"]
             product_id = Product.objects.get(name=product)
 
             if Review.objects.filter(Q(product_id=product_id.id)&Q(user_id=user.id)).exists():
