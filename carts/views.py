@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.views    import View
 from django.http     import JsonResponse
@@ -12,11 +13,11 @@ class CartView(View):
     @login_decorator
     def patch(self, request, cart_id):
         try:
-            option_product_count = request.GET.get('qty')
-            product              = Cart.objects.get(id = cart_id)
-            
-            product.count = option_product_count
-            product.save()
+            data = json.loads(request.body)
+
+            count   = data["qty"]
+            product = Cart.objects.filter(id = cart_id)
+            product.update(count = count)
 
             return JsonResponse({'results' : "success"}, status=200)
 
