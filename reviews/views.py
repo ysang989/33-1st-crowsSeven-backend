@@ -1,16 +1,10 @@
 import json
-import datetime
 
 from django.views       import View
 from django.http        import JsonResponse
-from django.db.models   import Q
-from django.shortcuts   import redirect
 
-from reviews.models     import Review, Comment
-from products.models    import Product
-from orders.models      import Order, OrderItem
-from products.models    import OptionProduct, Product
-from users.models       import User
+from orders.models      import Order
+from products.models    import OptionProduct
 from utils              import login_decorator
 
 class ReviewView(View):
@@ -29,9 +23,8 @@ class ReviewView(View):
                 total_option.append(list(total_option_product.orderitem_set.values('option_product_id')))
 
             total_option_product_names = sum(total_option,[])
-
-            for total_option_product_name in total_option_product_names:
-                total_option_product_id.append(list(map(dict,set(tuple(sorted(total_option_product_names.items()))))))
+            
+            total_option_product_id.append(list(map(dict,set(tuple(sorted(total_option_product_names.items())) for total_option_product_name in total_option_product_names))))
 
             [selected_products.append(total_option_product_id[i]['option_product_id']) for i in range(len(a))]
 
