@@ -22,41 +22,37 @@ class OrderView(View):
     def post(self, request):
         try:
             data                = json.loads(request.body)
-            selected_product_id = request.GET.get('option_product_id', None)
-            user                = request.user
-            shopping_fee        = data["shopping_fee"]
-            paymentmethod       = data["paymentmethod"]
-            delivery_address    = data["delivery_address"]
-            delivery_email      = data["delivery_email"]
-            recipient           = data["recipient"]
-            receive_phonenumber = data["receive_phonenumber"]
-            delivery_message    = data["delivery_message"]
+            user                 = request.user
+            shopping_fee         = data["shopping_fee"]
+            paymentmethod        = data["paymentmethod"]
+            delivery_address     = data["delivery_address"]
+            delivery_email       = data["delivery_email"]
+            recipient            = data["recipient"]
+            receive_phonenumber  = data["receive_phonenumber"]
+            delivery_message     = data["delivery_message"]
+            selected_product_ids = data["option_product_id"][1]
+
+            address = PresentDeliveryAddress.objects.create(
+                delivery_address         = delivery_address,
+                delivery_email           = delivery_email,
+                recipient                = recipient,
+                receive_phonenumber      = receive_phonenumber,
+                delivery_message         = delivery_message,
+            )
+
+            order = Order.objects.create(
+                user                     = User.objects.get(id=user),
+                order_number             = uuid.uuid4(),
+                order_status             = OrderStatus.objects.get(status ="주문완료"),
+                present_delivery_address = address,
+                shopping_fee             = shopping_fee,
+                paymentmethod            = PaymentMethod.objects.get(payment = paymentmethod)
+            )
+
 
             if selected_product_id:
-              return JsonResponse({'results' : "success"}, status=200)
-
-            else:
-                carts   = Cart.objects.filter(user_id=user)
-
-                address = PresentDeliveryAddress.objects.create(
-                    delivery_address         = delivery_address,
-                    delivery_email           = delivery_email,
-                    recipient                = recipient,
-                    receive_phonenumber      = receive_phonenumber,
-                    delivery_message         = delivery_message,
-                )
-
-                order = Order.objects.create(
-                    user                     = User.objects.get(id=user),
-                    order_number             = uuid.uuid4(),
-                    order_status             = OrderStatus.objects.get(status ="주문완료"),
-                    present_delivery_address = address,
-                    shopping_fee             = shopping_fee,
-                    paymentmethod            = PaymentMethod.objects.get(payment = paymentmethod)
-                )
-
-                for cart in carts :
-                    order_item (
+                for selected_product_id in selected_product_ids:
+                    order_item = OrderItem.objects.create(
                         order = order,
                         option_product = cart.option_product,
                         shipping_company = "cj",
@@ -64,14 +60,26 @@ class OrderView(View):
                         count = cart.count,
                         order_item_status = OrderItemStatus.objects.get(item_status = "입금전"),
                         )
-                OrderItem.objects.bulk_create(order_item)
 
-                carts.delete()
+            else:
+                carts   = Cart.objects.filter(user_id=user)
+
+                for cart in carts :
+                    order_item = OrderItem.objects.create(
+                        order = order,
+                        option_product = cart.option_product,
+                        shipping_company = "cj",
+                        shipping_number  = uuid.uuid4(),
+                        count = cart.count,
+                        order_item_status = OrderItemStatus.objects.get(item_status = "입금전"),
+                        )
+
+            carts.delete()
                 
-                results=[{
-                    "order_count": order.order_number,
-                    "order_time" : order.created_at
-                }]
+            results=[{
+                "order_count": order.order_number,
+                "order_time" : order.created_at
+            }]
 
             return JsonResponse({'results' : results}, status=200)
 
