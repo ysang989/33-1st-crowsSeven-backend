@@ -1,28 +1,21 @@
-from django.shortcuts import render
-
-# Create your views here.
 import json
-import datetime
 
 from django.views       import View
 from django.http        import JsonResponse
-from django.db.models   import Q
-from django.shortcuts   import redirect
 
-from reviews.models     import Review, Comment
-from products.models    import Product
-from orders.models      import Order, OrderItem
-from products.models    import OptionProduct, Product
-from users.models       import User
-from utils              import login_decorator
+from reviews.models     import Review
 
 class WholeReviewView(View):
     def get(self, request):
         try:
-            reviews = Review.objects.order_by("-created_at")
+            limit         = int(request.GET.get('limit', 5))
+            offset        = int(request.GET.get('offset',0))
+
+            reviews = Review.objects.order_by("-created_at")[offset:offset+limit]
+
             review_list =[{
                 "review_id"        : review.id,
-                "review_product"   : review.product.name,
+                "review_product"   : review.product.name[0]+"***",
                 "review_title"     : review.title,
                 "review_thumb_nail": review.product.thumbnail_image_url,
                 "review_name"      : review.user.username,
