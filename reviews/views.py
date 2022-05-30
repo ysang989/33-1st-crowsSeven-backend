@@ -1,17 +1,10 @@
 import json
-import datetime
 
 from django.views       import View
 from django.http        import JsonResponse
 from django.db.models   import Q
-from django.shortcuts   import redirect
 
-from reviews.models     import Review, Comment
-from products.models    import Product
-from orders.models      import Order, OrderItem
-from products.models    import OptionProduct, Product
-from users.models       import User
-from utils              import login_decorator
+from reviews.models     import Review
 
 class ReviewSearchView(View):
     def get(self, request):
@@ -22,14 +15,14 @@ class ReviewSearchView(View):
 
             q = Q()
 
-            if search_time_keyword == '5분':
-                q=Q(created_at__lt = datetime.datetime.now() - datetime.timedelta(minutes=5))
-            if search_time_keyword == '10분':
-                q=Q(created_at__lt = datetime.datetime.now() - datetime.timedelta(minutes=10))
-            if search_time_keyword == '15분':
-                q=Q(created_at__lt = datetime.datetime.now() - datetime.timedelta(minutes=15))
-            if search_time_keyword == '20분':
-                q=Q(created_at__lt = datetime.datetime.now() - datetime.timedelta(minutes=20))
+            if search_time_keyword == '일주일':
+                q &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(days=7))
+            if search_time_keyword == '한달':
+                q &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(months=1))
+            if search_time_keyword == '세달':
+                q &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(months=3))
+            if search_time_keyword == '전체':
+                q &= Review.objects.all()
 
             if search_type == '제목':
                 q &= Q(title__icontains = search_keyword )
