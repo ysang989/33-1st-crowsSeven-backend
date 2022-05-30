@@ -19,31 +19,40 @@ class ReviewDetailView(View):
             results = []
             review  = Review.objects.get(id=review_id)
             
-            comments = []
-            for comment in Comment.objects.select_related('review').filter(review_id=review.id):
-                comments.append({
-                    'comment_writer'    : comment.user.name,
+            comments=[{
+                    'comment_writer'    : comment.user.name[0]+"***",
                     'comment_created_at': comment.created_at,
                     'content'           : comment.content
-                })
+                } for comment in Comment.objects.select_related('review').filter(review_id=review.id)]
+
             if Review.objects.filter(id=review_id).exists():
                 review.view_count = review.view_count+1
                 review.save()
 
-            product = []
-            product.append({
+            product = [{
                 'product_name'           : review.product.name,
                 'product_price'          : review.product.price,
                 'product_thumbnail_image': review.product.thumbnail_image_url
-            })
+            }]
+
+            related_reviews      = Reviews.objects.exclude(id=review_id)
+            related_review=[{
+                'review_id'        : have_relation_review.id,
+                'review_product'   : have_relation_review.product.name,
+                'review_title'     : have_relation_review.title,
+                'review_writer'    : have_relation_review.user.name[0]+"***",
+                'review_created_at': have_relation_review.created_at,
+                'review_view_poitn': have_relation_review.view_count
+            } for have_relation_review in related_reviews]
 
             results.append({
                 'title'           : review.title,
-                'review_writer'   : review.user.name,
+                'review_writer'   : review.user.name[0]+"***",
                 'title_created_at': review.created_at,
                 'view_count'      : review.view_count,
                 'comment'         : comments,
-                'product'         : product
+                'product'         : product,
+                'related_review'  : related_review
             })
             return JsonResponse({"message" : results}, status=200)
 
