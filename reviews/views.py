@@ -20,9 +20,9 @@ class ReviewView(View):
             context    = data["context"]
             password   = data["password"]
             product    = data["product"]
-            product    = Product.objects.get(name=product)
+            product_id = Product.objects.get(name=product)
 
-            if Review.objects.filter(Q(product_id=product.id)&Q(user_id=user.id)).exists():
+            if Review.objects.filter(Q(product_id=product_id.id)&Q(user_id=user.id)).exists():
                 return JsonResponse({'message':'REVIEW_ALREADY_EXIST'}, status=404)
 
             Review.objects.create(
@@ -31,7 +31,7 @@ class ReviewView(View):
                 context    = context,
                 password   = password,
                 view_count = 0,
-                product    = product
+                product    = product_id
             )
 
             return JsonResponse({"message" : "SUCCESS"}, status=201)
