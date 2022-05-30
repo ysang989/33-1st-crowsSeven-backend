@@ -1,12 +1,12 @@
-from django.views import View
 import datetime
 
+from django.views    import View
 from django.http     import JsonResponse
 
 from products.models import OptionProduct
 from carts.models    import Cart
-from users.models  import User
-from utils         import login_decorator
+from users.models    import User
+from utils           import login_decorator
 
 class CartView(View):
     @login_decorator
