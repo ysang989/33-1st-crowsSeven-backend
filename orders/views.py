@@ -56,7 +56,7 @@ class OrderView(View):
                 )
 
                 for cart in carts :
-                    order_item = OrderItem.objects.create(
+                    order_item (
                         order = order,
                         option_product = cart.option_product,
                         shipping_company = "cj",
@@ -64,6 +64,7 @@ class OrderView(View):
                         count = cart.count,
                         order_item_status = OrderItemStatus.objects.get(item_status = "입금전"),
                         )
+                OrderItem.objects.bulk_create(order_item)
 
                 carts.delete()
                 
