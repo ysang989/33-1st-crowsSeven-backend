@@ -13,9 +13,8 @@ class ReviewView(View):
         try:
             total_option_product    = []
             selected_products_name  = []
-            total_option_product_id = []
-            total_option            = []
             selected_products       = []
+            total_option            = []
 
             total_order=Order.objects.filter(user_id=request.user).select_related('user').prefetch_related('orderitem_set')
 
@@ -24,13 +23,15 @@ class ReviewView(View):
 
             total_option_product_names = sum(total_option,[])
             
-            total_option_product_id.append(list(map(dict,set(tuple(sorted(total_option_product_names.items())) for total_option_product_name in total_option_product_names))))
+            [selected_products.append(total_option_product_names[i]['option_product_id']) for i in range(len(total_option_product_names))]
 
-            [selected_products.append(total_option_product_id[i]['option_product_id']) for i in range(len(a))]
-
-            [selected_products_name.append(OptionProduct.objects.get(id=j).product.name) for selected_product in selected_products]
-            
-            return JsonResponse({"message" : list(set(c))}, status=200)
+            selected_products_name = [{
+                "제품이름"  : OptionProduct.objects.get(id=selected_product).product.name,
+                "제품아이디" : OptionProduct.objects.get(id=selected_product).product.id
+            } for selected_product in selected_products ]
+           
+            selected_products_name = list({v['제품이름']:v for v in selected_products_name}.values())
+            return JsonResponse({"message" : selected_products_name}, status=200)
             
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
