@@ -8,10 +8,10 @@ from django.db.models   import Q
 from reviews.models     import Review
 from products.models    import Product
 from users.models       import User
-from users.utils        import jwt_expression
+from utils              import login_decorator
 
 class ReviewView(View):
-    @jwt_expression
+    @login_decorator
     def post(self, request):
         try:
             data     = json.loads(request.body)
@@ -31,10 +31,10 @@ class ReviewView(View):
                 context    = context,
                 password   = password,
                 view_count = 0,
-                product    = product2
+                product    = product
             )
 
-            return JsonResponse({"message" : "SUCCESS"}, status=200)
+            return JsonResponse({"message" : "SUCCESS"}, status=201)
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
