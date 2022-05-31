@@ -14,10 +14,11 @@ class ReviewDetailView(View):
             review  = Review.objects.get(id=review_id)
             
             comments=[{
+                    'comment_id'        : comment.id,
                     'comment_writer'    : comment.user.name[0]+"***",
                     'comment_created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
                     'content'           : comment.content
-                } for comment in Comment.objects.select_related('review').filter(review_id=review.id)]
+                } for comment in Comment.objects.filter(review_id=review.id)]
 
             if Review.objects.filter(id = review_id).exists():
                 review.view_count = review.view_count+1
@@ -41,6 +42,7 @@ class ReviewDetailView(View):
             } for have_relation_review in related_reviews]
 
             results.append({
+                'detail_review_id': review.id,
                 'title'           : review.title,
                 'review_writer'   : review.user.name[0]+"***",
                 'title_created_at': review.created_at.strftime('%Y-%m-%d %H:%M:%S'),
