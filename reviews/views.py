@@ -9,33 +9,31 @@ from reviews.models     import Review
 class ReviewSearchView(View):
     def get(self, request):
         try:
-            search_keyword = request.GET.get('q', None)
-            search_time_keyword = request.GET.get('time', None)
-            search_type = request.GET.get('type', None)
+            days         = request.GET.get('days')
+            type         = request.GET.get('type', None)
+            type_keyword = request.GET.get('q', None)
 
-            q = Q()
+            search_keyword = Q()
+            search_time_keyword = {
+                "일주일" : 7,
+                "한달"  : 5,
+                "세달"  : 3,
+            }
 
-            if search_time_keyword == '일주일':
-                q &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(days=7))
-            if search_time_keyword == '한달':
-                q &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(months=1))
-            if search_time_keyword == '세달':
-                q &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(months=3))
-            if search_time_keyword == '전체':
-                q &= Review.objects.all()
+            if days in search_time_keyword:
+                q &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(minutes=int(search_time_keyword)))
+            
+            search_dict = {
+                "title"  : "title__icontains",
+                "content": "context__icontains",
+                "author" : "user__name__icontains",
+                "id"     : "user__id__icontains",
+                "product": "product__name__icontains",
+            }
 
-            if search_type == '제목':
-                q &= Q(title__icontains = search_keyword )
-            if search_type == '내용':
-                q &= Q(context__icontains= search_keyword )
-            if search_type == '글쓴이':
-                q &= Q(user__id__icontains = search_keyword )
-            if search_type == '아이디':
-                q &= Q(id__icontains = search_keyword )
-            if search_type == '상품정보':
-                q &= Q(product__name__icontains = search_keyword)
+            search_filter = {search_dict[search_type] : search_type_keyword} if search_type_keyword and search_type else {}
 
-            searched_reviews = Review.objects.filter(q).distinct()
+            searched_reviews = Review.objects.filter(q, **search_filter).distinct()
 
             review_list =[{
                 "review_id"        : review.id,
