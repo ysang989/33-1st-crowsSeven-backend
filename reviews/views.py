@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from django.views       import View
 from django.http        import JsonResponse
@@ -9,19 +10,20 @@ from reviews.models     import Review
 class ReviewSearchView(View):
     def get(self, request):
         try:
-            days         = request.GET.get('days')
-            type         = request.GET.get('type', None)
-            type_keyword = request.GET.get('q', None)
+            day          = request.GET.get('days')
+            search_type  = request.GET.get('type', None)
+            search_type_keyword = request.GET.get('q', None)
 
             search_keyword = Q()
-            search_time_keyword = {
-                "일주일" : 7,
+
+            days = {
+                "일주일" : 25,
                 "한달"  : 5,
                 "세달"  : 3,
             }
 
-            if days in search_time_keyword:
-                q &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(minutes=int(search_time_keyword)))
+            if day in days:
+                search_keyword &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(minutes=int(days[day])))
             
             search_dict = {
                 "title"  : "title__icontains",
@@ -33,7 +35,7 @@ class ReviewSearchView(View):
 
             search_filter = {search_dict[search_type] : search_type_keyword} if search_type_keyword and search_type else {}
 
-            searched_reviews = Review.objects.filter(q, **search_filter).distinct()
+            searched_reviews = Review.objects.filter(search_keyword, **search_filter).distinct()
 
             review_list =[{
                 "review_id"        : review.id,
