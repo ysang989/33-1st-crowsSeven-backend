@@ -71,8 +71,8 @@ class ProductDetailView(View):
 class ProductListView(View):
     def get(self, request):
         try:
-            category = request.GET.get('category', None)
-            material = request.GET.get('material', None)
+            category    = request.GET.get('category', None)
+            material    = request.GET.get('material', None)
             sort_method = request.GET.get('sort_method', None)
 
             q = Q()
@@ -84,22 +84,11 @@ class ProductListView(View):
                 q &= Q(material__name=material)
 
             sort_type = {
-                "신상품순" : "the_newest",
+                "신상품순": "-the_newest",
                 "상품순" : "name",
-                "낮은가격" : "-price",
-                "높은가격" : "price",
+                "낮은가격": "-price",
+                "높은가격": "price",
             }
-            
-            # q = Q()
-
-            # if category:
-            #     q &= Q(product_product_category__product_category_name=category)
-        
-                
-            # if Product.objects.filter(the_newest = 1):
-            #     products = Product.objects.filter(the_newest=1)
-
-            # product  = ProductCategory.objects.get(name=category)
             products = Product.objects.filter(q).order_by(sort_type[sort_method])
 
 
