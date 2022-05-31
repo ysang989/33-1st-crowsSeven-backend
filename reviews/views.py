@@ -1,5 +1,5 @@
-import json
 import datetime
+import json
 
 from django.views       import View
 from django.http        import JsonResponse
@@ -13,6 +13,26 @@ from users.models       import User
 from utils              import login_decorator
 
 class ReviewView(View):
+    @login_decorator
+    def patch(self, request, review_id):
+        try:
+            data           = json.loads(request.body)
+            title          = data["title"]
+            context        = data["context"]
+            review         = Review.objects.get(id = review_id)
+            review.title   = title
+            review.context = context
+
+            review.save()
+    
+            return JsonResponse({"message" : "SUCCESS"}, status=201)
+
+        except Review.DoesNotExist:
+            return JsonResponse({"message" : "REVIEW_NOT_EXISTED"})
+
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
     @login_decorator
     def post(self, request, product_id):
         try:
@@ -75,3 +95,4 @@ class WholeReviewView(View):
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
