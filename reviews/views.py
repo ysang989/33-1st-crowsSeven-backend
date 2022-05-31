@@ -25,10 +25,12 @@ class ReviewView(View):
     
             return JsonResponse({"message" : "SUCCESS"}, status=201)
 
+        except Review.DoesNotExist:
+            return JsonResponse({"message" : "REVIEW_NOT_EXISTED"})
+
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
-class ReviewView(View):
     @login_decorator
     def post(self, request, product_id):
         try:
