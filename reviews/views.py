@@ -14,14 +14,13 @@ class CommentView(View):
             data = json.loads(request.body)
             
             user         = request.user
-            review       = Review.objects.get(id=review_id)
             name         = data["name"]
             content      = data["content"]
             password     = data["password"]
 
             Comment.objects.create(
                 user     = user,
-                review   = review,
+                review   = review_id,
                 name     = name,
                 content  = content,
                 password = password
