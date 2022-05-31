@@ -71,7 +71,11 @@ class ProductDetailView(View):
 class ProductSearchView(View):
     def get(self, request):
         try:
+            # query parameter
+            # QueryDict
             keyword = request.GET.get("keyword")
+            # Q()
+            # keyword의 존재 여부에 따라 filter 안에 조건을 더할지 말지
             objects = Product.objects.filter(name__contains=keyword)
             results = [{
                 "product": object.name
