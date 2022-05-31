@@ -16,7 +16,7 @@ class ReviewView(View):
             review = Review.objects.get(id=review_id)
             review.delete()
 
-            return JsonResponse({"message" : review_list}, status=200)
+            return JsonResponse({"message" : "SUCCESS"}, status=200)
             
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
