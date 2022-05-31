@@ -20,18 +20,18 @@ class CartView(View):
             selected_product_id = request.GET.get('option_product_id', None)
             option_name         = request.GET.get('option_name', None)
 
-            cart_products = Cart.objects.select_related('option_product').filter(user_id = request.user)
-            carts = cart_products.filter(option_product = selected_product_id)
+            cart_products = Cart.objects.select_related('option_product').filter(user_id = request.user.id)
+            carts         = cart_products.filter(option_product = selected_product_id)
 
             if selected_product_id:
                 if carts.exists():
-                    cart = carts.get(option_product_id = OptionProduct.objects.get(id=selected_product_id))
+                    cart        = carts.get(option_product_id = OptionProduct.objects.get(id=selected_product_id))
                     cart.count += int(count)
                     cart.save()
 
                 else:
                     Cart.objects.create(
-                        user           = User.objects.get(id=request.user),
+                        user           = request.user,
                         option_product = OptionProduct.objects.get(id=selected_product_id),
                         count          = count
                     )
