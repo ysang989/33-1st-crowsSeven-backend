@@ -67,3 +67,49 @@ class ProductDetailView(View):
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
+class ProductListView(View):
+    def get(self, request):
+        try:
+            category = request.GET.get('category', None)
+            material = request.GET.get('material', None)
+            sort_method = request.GET.get('sort_method', None)
+
+            q = Q()
+
+            if category:
+                q &= Q(product_category__name=category)
+
+            if material:
+                q &= Q(material__name=material)
+
+            sort_type = {
+                "신상품순" : "the_newest",
+                "상품순" : "name",
+                "낮은가격" : "-price",
+                "높은가격" : "price",
+            }
+            
+            # q = Q()
+
+            # if category:
+            #     q &= Q(product_product_category__product_category_name=category)
+        
+                
+            # if Product.objects.filter(the_newest = 1):
+            #     products = Product.objects.filter(the_newest=1)
+
+            # product  = ProductCategory.objects.get(name=category)
+            products = Product.objects.filter(q).order_by(sort_type[sort_method])
+
+
+            product_list = [{
+            "id"        : product.id,
+            "thumbnail" : product.thumbnail_image_url,
+            "name"      : product.name,
+            "price"     : product.price
+            } for product in products]    
+            return JsonResponse({"product_list": product_list, "message": "SUCCESS"}, status=200)
+        
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
