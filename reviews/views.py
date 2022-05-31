@@ -6,6 +6,8 @@ from django.http        import JsonResponse
 from django.db.models   import Q
 
 from reviews.models     import Review
+from utils              import login_decorator
+from django.shortcuts   import redirect
 from products.models    import Product
 from users.models       import User
 from utils              import login_decorator
@@ -35,6 +37,22 @@ class ReviewView(View):
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
+class ReviewView(View):
+    @login_decorator
+    def delete(self, request, review_id):
+        try:
+            review = Review.objects.get(id=review_id)
+            review.delete()
+
+            return JsonResponse({"message" : "SUCCESS"}, status=200)
+
+        except Review.DoesNotExist:
+            return JsonResponse({"message" : "REVIEW_NOT_EXISTED"})
+
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
+        
 class WholeReviewView(View):
     def get(self, request):
         try:
