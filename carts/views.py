@@ -17,7 +17,7 @@ class CartView(View):
 
             count               = data["count"]
             selected_product_id = data["option_product_id"]
-
+            
             cart_products = Cart.objects.select_related('option_product').filter(user_id = request.user)
             carts         = cart_products.filter(option_product = selected_product_id)
 
