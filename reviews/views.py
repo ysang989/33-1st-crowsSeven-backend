@@ -10,20 +10,20 @@ from reviews.models     import Review
 class ReviewSearchView(View):
     def get(self, request):
         try:
-            day          = request.GET.get('days')
-            search_type  = request.GET.get('type', None)
+            day                 = request.GET.get('days')
+            search_type         = request.GET.get('type', None)
             search_type_keyword = request.GET.get('q', None)
 
             search_keyword = Q()
 
             days = {
-                "일주일" : 25,
-                "한달"  : 5,
-                "세달"  : 3,
+                "일주일" : 7,
+                "한달"  : 30,
+                "세달"  : 90,
             }
 
             if day in days:
-                search_keyword &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(minutes=int(days[day])))
+                search_keyword &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(days=int(days[day])))
             
             search_dict = {
                 "title"  : "title__icontains",
@@ -33,7 +33,7 @@ class ReviewSearchView(View):
                 "product": "product__name__icontains",
             }
 
-            search_filter = {search_dict[search_type] : search_type_keyword} if search_type_keyword and search_type else {}
+            search_filter    = {search_dict[search_type] : search_type_keyword} if search_type_keyword and search_type else {}
 
             searched_reviews = Review.objects.filter(search_keyword, **search_filter).distinct()
 
