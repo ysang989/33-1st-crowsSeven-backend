@@ -1,12 +1,9 @@
-import datetime
 import json
 
 from django.views    import View
 from django.http     import JsonResponse
 
-from products.models import OptionProduct
 from carts.models    import Cart
-from users.models    import User
 from utils           import login_decorator
 
 class CartView(View):
@@ -16,10 +13,16 @@ class CartView(View):
             data = json.loads(request.body)
 
             count   = data["qty"]
-            product = Cart.objects.filter(id = cart_id)
-            product.update(count = count)
+            product = Cart.objects.get(id=cart_id)
 
-            return JsonResponse({'results' : "success"}, status=200)
+            if product.option_product.stock <= count:
+                product.count = count
+                product.save()
+
+            else:
+                return JsonResponse({"message" : "STUFF_OVERFLOW"}, status=400) 
+
+            return JsonResponse({'results' : "success"}, status=201)
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
