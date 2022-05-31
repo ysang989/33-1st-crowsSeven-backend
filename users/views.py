@@ -83,3 +83,19 @@ class LoginView(View):
         
         except User.DoesNotExist:
             return JsonResponse({"message": "INVALID_USER"},status=401)
+
+class PurchasedProducts(View):
+    @login_decorator
+    def get(self, request):
+        try:
+            user = request.user
+
+            option_products = OptionProduct.objects.filter(orderitem__order__user = user)
+
+            results = [{
+                'id' : option_product.product.id 
+            } for option_product in option_products]
+            
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
