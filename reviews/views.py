@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.views       import View
 from django.http        import JsonResponse
@@ -16,12 +17,12 @@ class ReviewView(View):
             data           = json.loads(request.body)
             title          = data["title"]
             context        = data["context"]
-            review         = Review.objects.get(id=review_id)
+            review         = Review.objects.get(id = review_id)
             review.title   = title
             review.context = context
-            
+
             review.save()
-            
+    
             return JsonResponse({"message" : "SUCCESS"}, status=201)
 
         except KeyError :
