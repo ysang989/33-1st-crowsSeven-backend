@@ -13,7 +13,7 @@ class CommentView(View):
         try:
             data = json.loads(request.body)
             
-            user         = User.objects.get(id=request.user)
+            user         = request.user
             review       = Review.objects.get(id=review_id)
             name         = data["name"]
             content      = data["content"]
