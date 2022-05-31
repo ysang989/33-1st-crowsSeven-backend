@@ -27,4 +27,7 @@ class CartView(View):
             return JsonResponse({'results' : results}, status=200)
 
         except KeyError :
+            return JsonResponse({"message" : ""}, status=400)
+
+        except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
