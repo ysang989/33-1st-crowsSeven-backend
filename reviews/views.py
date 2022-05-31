@@ -17,9 +17,13 @@ class ReviewView(View):
             review.delete()
 
             return JsonResponse({"message" : "SUCCESS"}, status=200)
-            
+
+        except review.DoesNotExist:
+            return JsonResponse({"message" : "REVIEW_NOT_EXISTED"})
+
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
         
 class WholeReviewView(View):
     def get(self, request):
