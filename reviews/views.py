@@ -12,17 +12,16 @@ from utils              import login_decorator
 
 class ReviewView(View):
     @login_decorator
-    def post(self, request, product_id):
+    def post(self, request):
         try:
             data       = json.loads(request.body)
-            user       = User.objects.get(id=request.user)
+            user       = request.user
             title      = data["title"]
             context    = data["context"]
             password   = data["password"]
-            product    = product_id
-            product_id = Product.objects.get(id = product)
+            product    = data["product_id"]
         
-            if Review.objects.filter(Q(product_id=product)&Q(user_id=user.id)).exists():
+            if Review.objects.filter(product_id=product , user_id = user.id).exists():
                 return JsonResponse({'message':'REVIEW_ALREADY_EXIST'}, status=404)
             
             Review.objects.create(
@@ -31,7 +30,7 @@ class ReviewView(View):
                 context    = context,
                 password   = password,
                 view_count = 0,
-                product    = product_id,
+                product    = Product.objects.get(id=product),
             )
 
             return JsonResponse({"message" : "SUCCESS"}, status=201)
