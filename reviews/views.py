@@ -23,11 +23,11 @@ class CommentView(View):
             password     = data["password"]
 
             Comment.objects.create(
-                user     = user,
-                review   = review_id,
-                name     = name,
-                content  = content,
-                password = password
+                user      = user,
+                review_id = review_id,
+                name      = name,
+                content   = content,
+                password  = password
             )
 
             return JsonResponse({"message" : "SUCCESS"}, status=200)
