@@ -18,7 +18,7 @@ class ReviewView(View):
 
             return JsonResponse({"message" : "SUCCESS"}, status=200)
 
-        except review.DoesNotExist:
+        except Review.DoesNotExist:
             return JsonResponse({"message" : "REVIEW_NOT_EXISTED"})
 
         except KeyError :
