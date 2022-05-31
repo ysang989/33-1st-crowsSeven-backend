@@ -24,10 +24,10 @@ class CartView(View):
                 "product_price": cart_product.option_product.product.price,
             }for cart_product in cart_products]
 
-            return JsonResponse({'results' : results}, status=200)
+            return JsonResponse({'results' : results}, status=201)
 
-        except KeyError :
-            return JsonResponse({"message" : ""}, status=400)
+        except Cart.DoesNotExist:
+            return JsonResponse({"message" : "CART_NOT_EXISTED"}, status=400)
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
