@@ -73,10 +73,10 @@ class ProductListView(View):
         try:
             category    = request.GET.get('category', None)
             material    = request.GET.get('material', None)
-            sort_method = request.GET.get('sort_method', None)
+            sort_method = request.GET.get('sort_method', "상품순")
 
             q = Q()
-
+            
             if category:
                 q &= Q(product_category__name=category)
 
@@ -87,7 +87,7 @@ class ProductListView(View):
                 "신상품순": "-the_newest",
                 "상품순" : "name",
                 "낮은가격": "-price",
-                "높은가격": "price",
+                "높은가격": "price"
             }
             products = Product.objects.filter(q).order_by(sort_type[sort_method])
 
