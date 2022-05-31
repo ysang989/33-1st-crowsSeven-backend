@@ -5,7 +5,7 @@ from django.views       import View
 from django.http        import JsonResponse
 from django.db.models   import Q
 
-from reviews.models     import Review
+from reviews.models     import Review, Comment
 from products.models    import Product
 from users.models       import User
 from utils              import login_decorator
