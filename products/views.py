@@ -90,18 +90,26 @@ class ProductListView(View):
             if material:
                 q &= Q(material__name=material)
 
-            products = Product.objects.filter(q).order_by(sort_method)[offset:offset+limit]
-
+            products       = Product.objects.filter(q).order_by(sort_method)[offset:offset+limit]
+            total_count    = Product.objects.filter(q).order_by(sort_method).count()
 
             product_list = [{
-                "id"        : product.id,
-                "itemThumbnail" : product.thumbnail_image_url,
-                "itemName"      : product.name,
-                # "stock"    : product.optionproduct_set.all().stock,
-                "price"     : product.price
+                "id"           : product.id,
+                "itemThumbnail": product.thumbnail_image_url,
+                "itemName"     : product.name,
+                "price"        : product.price,
+                "quick shop"   : {
+                    'id'                 : product.id,
+                    'name'               : product.name,
+                    'description'        : product.description,
+                    'thumbnail_image_url': product.thumbnail_image_url,
+                    'the_newest'         : product.the_newest,
+                    'price'              : product.price,
+                }
             } for product in products]
-            # product_count = product_list.count()
-            return JsonResponse({"product_list": product_list, "message": "SUCCESS"}, status=200)
+            
+
+            return JsonResponse({"product_list": product_list, "total_count": total_count, "message": "SUCCESS"}, status=200)
         
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
