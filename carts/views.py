@@ -17,31 +17,15 @@ class CartView(View):
                 [cart.delete() for cart in carts]
             
             cart_products = Cart.objects.select_related('option_product').filter(user_id = request.user.id)
-
-            results = []
-
-            for cart_product in cart_products:
-                
-                if cart_product.option_product.shoe_size:
-                    option_name = "shoe_size" + " " + str(cart_product.option_product.shoe_size.size)
-                
-                elif cart_product.option_product.phone_type:
-                    option_name = "phone_type" + " " + cart_product.option_product.phone_type.name
-                
-                elif cart_product.option_product.airpot_type:
-                    option_name = "airpot_type" + " " + cart_product.option_product.airpot_type.name
-                
-                else :
-                    option_name = "None"
-
-                results.append({
+            
+            results = [{
                     "product_thumbnail_image_url": cart_product.option_product.product.thumbnail_image_url,
                     "product_name"               : cart_product.option_product.product.name,
                     "option_name"                : option_name,
                     "product_price"              : cart_product.option_product.product.price,
                     "product_count"              : cart_product.count,
                     "cart_id"                    : cart_product.id
-                })
+                }for cart_product in cart_products]
 
             return JsonResponse({'results' : results}, status=200)
 
