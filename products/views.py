@@ -74,7 +74,7 @@ class ProductListView(View):
             category    = request.GET.get('category', None)
             material    = request.GET.get('material', None)
             sort_method = request.GET.get('sort_method', "name")
-            limit       = int(request.GET.get('limit', 12))
+            limit       = int(request.GET.get('limit', 8))
             offset      = int(request.GET.get('offset', 0))
 
             #  "신상품순": "-the_newest",
@@ -95,10 +95,12 @@ class ProductListView(View):
 
             product_list = [{
                 "id"        : product.id,
-                "thumbnail" : product.thumbnail_image_url,
-                "name"      : product.name,
+                "itemThumbnail" : product.thumbnail_image_url,
+                "itemName"      : product.name,
+                # "stock"    : product.optionproduct_set.all().stock,
                 "price"     : product.price
-            } for product in products]    
+            } for product in products]
+            # product_count = product_list.count()
             return JsonResponse({"product_list": product_list, "message": "SUCCESS"}, status=200)
         
         except KeyError :
