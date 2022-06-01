@@ -86,8 +86,8 @@ class ProductSearchView(View):
             products = Product.objects.filter(q)[offset:offset+limit]
             results = [{
                 "id"       : product.id,
-                "thumbnail": product.thumbnail_image_url,
-                "name"     : product.name,
+                "itemThumbnail": product.thumbnail_image_url,
+                "itemName"     : product.name,
                 "price"    : product.price
             } for product in products]
 
