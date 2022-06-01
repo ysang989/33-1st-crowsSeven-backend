@@ -18,7 +18,7 @@ class ProductDetailView(View):
         try:
             product          = Product.objects.get(id=product_id)
             option_products  = OptionProduct.objects.filter(product_id=product_id)
-            option_product   = option_products[0]
+            # option_product   = option_products[0]
             option_existence = False if OptionProduct.objects.filter(Q(product_id=product_id) & Q(shoe_size_id=None) & Q(phone_type_id=None) & Q(airpot_type_id=None)) else True
 
             option_list = []
