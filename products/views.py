@@ -85,7 +85,10 @@ class ProductSearchView(View):
 
             products = Product.objects.filter(q)[offset:offset+limit]
             results = [{
-                "product": product.name
+                "id"       : product.id,
+                "thumbnail": product.thumbnail_image_url,
+                "name"     : product.name,
+                "price"    : product.price
             } for product in products]
 
             return JsonResponse({"products" : results}, status=200)
