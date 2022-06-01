@@ -64,13 +64,7 @@ class OrderView(View):
                     )
                     cart_item.delete()
 
-                results=[]
-                results =[{
-                    "order_count": order.order_number,
-                    "order_time" : order.created_at
-                }]
-
-            return JsonResponse({'results' : results}, status=200)
+            return JsonResponse({'message' : "success"}, status=200)
 
         except Cart.DoesNotExist:
             return JsonResponse({"message" : "CART_NOT_EXISTED"}, status=400)
