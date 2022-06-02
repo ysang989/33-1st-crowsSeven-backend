@@ -1,11 +1,13 @@
 import json, re 
-
 import bcrypt, jwt
+
 from django.views import View
 from django.http  import JsonResponse
 from django.conf  import settings
 
-from .models import User
+from .models         import User
+from products.models import OptionProduct
+from utils           import login_decorator
 
 class SignupView(View):
     def post(self, request):
@@ -23,7 +25,7 @@ class SignupView(View):
 
             REGEX_USERNAME    = '[a-z0-9]{4,16}$'
             REGEX_EMAIL       = '[a-zA-Z0-9_-]+@[a-z]+.[a-z]+$'
-            REGEX_PASSWORD    = '^[A-Za-z0-9]{4,16}$'
+            REGEX_PASSWORD    = '^.*(?=^.{4,16}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$'
             REGEX_PHONENUMBER = '\d{10,11}'
             REGEX_BIRTHDATE   = '^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$'
 
@@ -83,3 +85,23 @@ class LoginView(View):
         
         except User.DoesNotExist:
             return JsonResponse({"message": "INVALID_USER"},status=401)
+
+class PurchasedProducts(View):
+    @login_decorator
+    def get(self, request):
+        try:
+            user = request.user
+
+            option_products = OptionProduct.objects.filter(orderitem__order__user = user)
+
+            results = [{
+                'id'  : option_product.product.id,
+                'name': option_product.product.name
+            } for option_product in option_products]
+
+            results = list({result['id']:result for result in results}.values())
+        
+            return JsonResponse({"message": results}, status=200)
+
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
