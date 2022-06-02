@@ -18,7 +18,6 @@ class ProductDetailView(View):
         try:
             product          = Product.objects.get(id=product_id)
             option_products  = OptionProduct.objects.filter(product_id=product_id)
-            # option_product   = option_products[0]
             option_existence = False if OptionProduct.objects.filter(Q(product_id=product_id) & Q(shoe_size_id=None) & Q(phone_type_id=None) & Q(airpot_type_id=None)) else True
 
             option_list = []
@@ -76,11 +75,6 @@ class ProductListView(View):
             sort_method = request.GET.get('sort_method', "name")
             limit       = int(request.GET.get('limit', 8))
             offset      = int(request.GET.get('offset', 0))
-
-            #  "신상품순": "-the_newest",
-            #  "상품순" : "name",
-            #  "낮은가격": "-price",
-            #  "높은가격": "price"
 
             q = Q()
             
