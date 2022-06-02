@@ -1,23 +1,90 @@
-import datetime
 import json
+import datetime
 
 from django.views       import View
 from django.http        import JsonResponse
 from django.db.models   import Q
 
-
 from reviews.models     import Review, Comment
-from django.shortcuts   import redirect
-from products.models    import Product
 from users.models       import User
 from utils              import login_decorator
+from django.shortcuts   import redirect
+from products.models    import Product
+
+class CommentView(View):
+    @login_decorator
+    def post(self, request, review_id):
+        try:
+            data = json.loads(request.body)
+            
+            user         = request.user
+            name         = data["name"]
+            content      = data["content"]
+            password     = data["password"]
+
+            Comment.objects.create(
+                user      = user,
+                review_id = review_id,
+                name      = name,
+                content   = content,
+                password  = password
+            )
+
+            return JsonResponse({"message" : "SUCCESS"}, status=200)
+
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
+class ReviewSearchView(View):
+    def get(self, request):
+        try:
+            day                 = request.GET.get('days')
+            search_type         = request.GET.get('type', None)
+            search_type_keyword = request.GET.get('q', None)
+
+            search_keyword = Q()
+
+            days = {
+                "일주일" : 7,
+                "한달"  : 30,
+                "세달"  : 90,
+            }
+
+            if day in days:
+                search_keyword &= Q(created_at__gte = datetime.datetime.now() - datetime.timedelta(days=int(days[day])))
+            
+            search_dict = {
+                "title"  : "title__icontains",
+                "content": "context__icontains",
+                "author" : "user__name__icontains",
+                "id"     : "user__id__icontains",
+                "product": "product__name__icontains",
+            }
+
+            search_filter    = {search_dict[search_type] : search_type_keyword} if search_type_keyword and search_type else {}
+
+            searched_reviews = Review.objects.filter(search_keyword, **search_filter).distinct()
+
+            review_list =[{
+                "review_id"        : review.id,
+                "review_product"   : review.product.name,
+                "review_title"     : review.title,
+                "review_thumb_nail": review.product.thumbnail_image_url,
+                "review_name"      : review.user.username,
+                "review_date"      : review.updated_at,
+                "review_view_count": review.view_count
+            } for review in searched_reviews]
+
+            return JsonResponse({"message" : review_list}, status=200)
+
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400) 
 
 class ReviewDetailView(View):
     def get(self, request, review_id):
         try:
             results = []
             review  = Review.objects.get(id=review_id)
-            
             comments=[{
                     'comment_id'        : comment.id,
                     'comment_writer'    : comment.user.name[0]+"***",
@@ -121,7 +188,6 @@ class ReviewView(View):
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
-        
 class WholeReviewView(View):
     def get(self, request):
         try:
