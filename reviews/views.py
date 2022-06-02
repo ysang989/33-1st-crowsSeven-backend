@@ -6,8 +6,7 @@ from django.http        import JsonResponse
 from django.db.models   import Q
 
 from reviews.models     import Review
-# from utils             
-
+from utils              import login_decorator
 class ReviewSearchView(View):
     def get(self, request):
         try:
