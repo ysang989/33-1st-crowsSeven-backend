@@ -67,3 +67,31 @@ class ProductDetailView(View):
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
+class ProductSearchView(View):
+    def get(self, request):
+        try:
+            keyword = request.GET.get("keyword", None)
+            limit   = int(request.GET.get("limit", 12))
+            offset  = int(request.GET.get("offset", 0))
+
+            q = Q()
+
+            if keyword == None:
+                return JsonResponse({"message": 'INVALIED_KEYWORD'}, status = 400)
+
+            if keyword:
+                q &= Q(name__contains=keyword)
+
+            products = Product.objects.filter(q)[offset:offset+limit]
+            results = [{
+                "id"       : product.id,
+                "itemThumbnail": product.thumbnail_image_url,
+                "itemName"     : product.name,
+                "price"    : product.price
+            } for product in products]
+
+            return JsonResponse({"products" : results}, status=200)
+
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
