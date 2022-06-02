@@ -98,6 +98,8 @@ class ProductListView(View):
                 "itemThumbnail": product.thumbnail_image_url,
                 "itemName"     : product.name,
                 "price"        : product.price,
+                "total_count"  : total_count,
+
                 "quick shop"   : {
                     'id'                 : product.id,
                     'name'               : product.name,
@@ -105,11 +107,11 @@ class ProductListView(View):
                     'thumbnail_image_url': product.thumbnail_image_url,
                     'the_newest'         : product.the_newest,
                     'price'              : product.price,
-                }
-            } for product in products]
+                }}
+                for product in products]
             
 
-            return JsonResponse({"product_list": product_list, "total_count": total_count, "message": "SUCCESS"}, status=200)
+            return JsonResponse({"product_list": product_list, "message": "SUCCESS"}, status=200)
         
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
