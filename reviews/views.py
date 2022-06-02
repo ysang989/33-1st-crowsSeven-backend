@@ -6,6 +6,7 @@ from django.http        import JsonResponse
 from django.db.models   import Q
 
 from reviews.models     import Review
+# from utils             
 
 class ReviewSearchView(View):
     def get(self, request):
