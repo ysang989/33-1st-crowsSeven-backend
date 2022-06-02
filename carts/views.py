@@ -11,7 +11,6 @@ from utils           import login_decorator
 
 class CartView(View):
     @login_decorator
-<<<<<<< HEAD
     def post(self, request):
         try:
             data       = json.loads(request.body)
@@ -35,7 +34,8 @@ class CartView(View):
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
-=======
+
+    @login_decorator
     def delete(self, request, cart_id):
         try:
             cart = Cart.objects.get(id = cart_id)
@@ -92,4 +92,3 @@ class CartView(View):
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
->>>>>>> main
