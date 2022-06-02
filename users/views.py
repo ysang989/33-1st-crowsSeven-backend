@@ -101,7 +101,7 @@ class PurchasedProducts(View):
 
             results = list({result['id']:result for result in results}.values())
         
-            return JsonResponse({"message": results}, status=400)
+            return JsonResponse({"message": results}, status=200)
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
