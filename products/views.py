@@ -28,7 +28,7 @@ class ProductDetailView(View):
             for option_product in option_products:
                 if option_product.shoe_size:
                     option_type = 'shoe_size'
-                    option_name = option_product.shoe_size.name
+                    option_name = option_product.shoe_size.size
                     option_list.append({
                         'option_name' : option_name if option_name else None,
                         'stock'       : option_product.stock
@@ -98,10 +98,9 @@ class ProductListView(View):
                 "itemThumbnail": product.thumbnail_image_url,
                 "itemName"     : product.name,
                 "price"        : product.price,
-                # "total_count"  : total_count
+                "total_count"  : total_count
                 }for product in products]
 
-            product_list.append({"total_count" : total_count})
             
 
             return JsonResponse({"product_list": product_list, "message": "SUCCESS"}, status=200)
