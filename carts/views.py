@@ -13,14 +13,14 @@ class CartView(View):
             data = json.loads(request.body)
 
             count   = data["qty"]
-            product = Cart.objects.get(id=cart_id)
+            cart    = Cart.objects.get(id=cart_id)
 
-            if product.option_product.stock < count:
+            if cart.option_product.stock < count:
                 return JsonResponse({"message" : "STUFF_OVERFLOW"}, status=400) 
                 
             else:
-                product.count = count
-                product.save()
+                cart.count = count
+                cart.save()
                 
             return JsonResponse({'message' : "SUCCESS"}, status=201)
 
