@@ -5,7 +5,35 @@ from django.views       import View
 from django.http        import JsonResponse
 from django.db.models   import Q
 
-from reviews.models     import Review
+from reviews.models     import Review, Comment
+from users.models       import User
+from utils              import login_decorator
+from django.shortcuts   import redirect
+from products.models    import Product
+
+class CommentView(View):
+    @login_decorator
+    def post(self, request, review_id):
+        try:
+            data = json.loads(request.body)
+            
+            user         = request.user
+            name         = data["name"]
+            content      = data["content"]
+            password     = data["password"]
+
+            Comment.objects.create(
+                user      = user,
+                review_id = review_id,
+                name      = name,
+                content   = content,
+                password  = password
+            )
+
+            return JsonResponse({"message" : "SUCCESS"}, status=200)
+
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
 class ReviewSearchView(View):
     def get(self, request):
@@ -160,7 +188,6 @@ class ReviewView(View):
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
-        
 class WholeReviewView(View):
     def get(self, request):
         try:
