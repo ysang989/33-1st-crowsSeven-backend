@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views      import ReviewDetailView, ReviewView, WholeReviewView, CommentView, ReviewSearchView
+from .views      import ReviewDetailView, ReviewView, WholeReviewView, ReviewSearchView, CommentView
 
 urlpatterns = [
     path("/<int:review_id>", ReviewDetailView.as_view()),
