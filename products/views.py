@@ -98,17 +98,10 @@ class ProductListView(View):
                 "itemThumbnail": product.thumbnail_image_url,
                 "itemName"     : product.name,
                 "price"        : product.price,
-                "total_count"  : total_count,
+                # "total_count"  : total_count
+                }for product in products]
 
-                "quick shop"   : {
-                    'id'                 : product.id,
-                    'name'               : product.name,
-                    'description'        : product.description,
-                    'thumbnail_image_url': product.thumbnail_image_url,
-                    'the_newest'         : product.the_newest,
-                    'price'              : product.price,
-                }}
-                for product in products]
+            product_list.append({"total_count" : total_count})
             
 
             return JsonResponse({"product_list": product_list, "message": "SUCCESS"}, status=200)
