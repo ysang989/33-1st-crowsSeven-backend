@@ -99,9 +99,7 @@ class ProductListView(View):
                 "itemName"     : product.name,
                 "price"        : product.price,
                 "total_count"  : total_count
-                }for product in products]
-
-            
+                }for product in products]    
 
             return JsonResponse({"product_list": product_list, "message": "SUCCESS"}, status=200)
         
