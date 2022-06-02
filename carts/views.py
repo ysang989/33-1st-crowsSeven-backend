@@ -12,10 +12,8 @@ class CartView(View):
     @login_decorator
     def get(self, request):
         try:
-            carts = Cart.objects.filter(created_at__lt = datetime.datetime.now() - datetime.timedelta(hours=24))
-            if carts:
-                [cart.delete() for cart in carts]
-            
+            Cart.objects.filter(created_at__lt = datetime.datetime.now() - datetime.timedelta(hours=24)).delete()
+           
             cart_products = Cart.objects.select_related('option_product').filter(user_id = request.user.id)
             
             results = [{
