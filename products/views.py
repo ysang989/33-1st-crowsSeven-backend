@@ -1,6 +1,6 @@
 from django.views       import View
 from django.http        import JsonResponse
-from django.db.models   import Q
+from django.db.models   import Q, Count
 
 from products.models    import (
     OptionProduct,
@@ -84,17 +84,17 @@ class ProductListView(View):
             if material:
                 q &= Q(material__name=material)
 
-            products       = Product.objects.filter(q).order_by(sort_method)[offset:offset+limit]
-            total_count    = Product.objects.filter(q).order_by(sort_method).count()
-
-            product_list = [{
-                "id"           : product.id,
-                "itemThumbnail": product.thumbnail_image_url,
-                "itemName"     : product.name,
-                "price"        : product.price,
-                "total_count"  : total_count
-                }for product in products]    
-
+            products   = Product.objects.filter(q).order_by(sort_method)
+            
+            product_list = {
+                "products": [{
+                    "id"           : product.id,
+                    "itemThumbnail": product.thumbnail_image_url,
+                    "itemName"     : product.name,
+                    "price"        : product.price,
+                    } for product in products[offset:offset+limit]],
+                "total_count": len(products)
+            }
             return JsonResponse({"product_list": product_list, "message": "SUCCESS"}, status=200)
         
         except KeyError :
