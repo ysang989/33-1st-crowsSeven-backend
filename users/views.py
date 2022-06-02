@@ -23,7 +23,7 @@ class SignupView(View):
 
             REGEX_USERNAME    = '[a-z0-9]{4,16}$'
             REGEX_EMAIL       = '[a-zA-Z0-9_-]+@[a-z]+.[a-z]+$'
-            REGEX_PASSWORD    = '^[A-Za-z0-9]{4,16}$'
+            REGEX_PASSWORD    = '^.*(?=^.{4,16}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$'
             REGEX_PHONENUMBER = '\d{10,11}'
             REGEX_BIRTHDATE   = '^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$'
 
