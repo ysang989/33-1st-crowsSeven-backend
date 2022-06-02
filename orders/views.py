@@ -23,16 +23,16 @@ class OrderView(View):
     @login_decorator
     def post(self, request):
         try:
-            data                 = json.loads(request.body)
-            user                 = request.user
-            shopping_fee         = data["shopping_fee"]
-            paymentmethod        = data["paymentmethod"]
-            delivery_address     = data["delivery_address"]
-            delivery_email       = data["delivery_email"]
-            recipient            = data["recipient"]
-            receive_phonenumber  = data["receive_phonenumber"]
-            delivery_message     = data["delivery_message"]
-            selected_product_ids = data["cart_ids"]
+            data                = json.loads(request.body)
+            user                = request.user
+            shopping_fee        = data["shopping_fee"]
+            paymentmethod       = data["paymentmethod"]
+            delivery_address    = data["delivery_address"]
+            delivery_email      = data["delivery_email"]
+            recipient           = data["recipient"]
+            receive_phonenumber = data["receive_phonenumber"]
+            delivery_message    = data["delivery_message"]
+            selected_cart_ids   = data["select_cart_ids"]
 
             with transaction.atomic():
                 address = PresentDeliveryAddress.objects.create(
@@ -52,8 +52,8 @@ class OrderView(View):
                     paymentmethod            = PaymentMethod.objects.get(payment = paymentmethod)
                 )
 
-                for selected_product_id in selected_product_ids:
-                    cart_item = Cart.objects.get(id = selected_product_id)
+                for selected_cart_id in selected_cart_ids:
+                    cart_item = Cart.objects.get(id = selected_cart_id)
                     OrderItem.objects.create(
                         order             = order,
                         option_product    = cart_item.option_product,
