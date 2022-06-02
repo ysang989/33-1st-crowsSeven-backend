@@ -14,25 +14,22 @@ class CartView(View):
     def post(self, request):
         try:
             data       = json.loads(request.body)
-
+            user        = request.user
             count               = data["count"]
             selected_product_id = data["option_product_id"]
             
             cart_products = Cart.objects.select_related('option_product').filter(user_id = request.user)
-            carts         = cart_products.filter(option_product = selected_product_id)
+            cart, created  = Cart.objects.get_or_create(
 
-            if carts.exists():
-                cart        = carts.get(option_product_id = OptionProduct.objects.get(id=selected_product_id))
-                cart.count += int(count)
-                cart.save()
-
-            else:
-                Cart.objects.create(
-                    user           = request.user,
-                    option_product = OptionProduct.objects.get(id=selected_product_id),
-                    count          = count
+                    user            = user,
+                    option_product  = selected_product_id,
+                    defaults        = {'count' : count },
                 )
 
+            if not created:
+                cart.count += int(count)
+                cart.save()
+               
             return JsonResponse({'message' : "success"}, status=201)
 
         except KeyError :
