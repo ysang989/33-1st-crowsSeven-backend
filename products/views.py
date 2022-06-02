@@ -1,6 +1,6 @@
 from django.views       import View
 from django.http        import JsonResponse
-from django.db.models   import Q
+from django.db.models   import Q, Count
 
 from products.models    import (
     OptionProduct,
@@ -18,7 +18,6 @@ class ProductDetailView(View):
         try:
             product          = Product.objects.get(id=product_id)
             option_products  = OptionProduct.objects.filter(product_id=product_id)
-            option_product   = option_products[0]
             option_existence = False if OptionProduct.objects.filter(Q(product_id=product_id) & Q(shoe_size_id=None) & Q(phone_type_id=None) & Q(airpot_type_id=None)) else True
 
             option_list = []
@@ -28,7 +27,7 @@ class ProductDetailView(View):
             for option_product in option_products:
                 if option_product.shoe_size:
                     option_type = 'shoe_size'
-                    option_name = option_product.shoe_size.name
+                    option_name = option_product.shoe_size.size
                     option_list.append({
                         'option_name' : option_name if option_name else None,
                         'stock'       : option_product.stock
@@ -68,6 +67,38 @@ class ProductDetailView(View):
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
+class ProductListView(View):
+    def get(self, request):
+        try:
+            category    = request.GET.get('category', None)
+            material    = request.GET.get('material', None)
+            sort_method = request.GET.get('sort_method', "name")
+            limit       = int(request.GET.get('limit', 8))
+            offset      = int(request.GET.get('offset', 0))
+
+            q = Q()
+            
+            if category:
+                q &= Q(product_category__name=category)
+
+            if material:
+                q &= Q(material__name=material)
+
+            products   = Product.objects.filter(q).order_by(sort_method)
+            
+            product_list = {
+                "products": [{
+                    "id"           : product.id,
+                    "itemThumbnail": product.thumbnail_image_url,
+                    "itemName"     : product.name,
+                    "price"        : product.price,
+                    } for product in products[offset:offset+limit]],
+                "total_count": len(products)
+            }
+            return JsonResponse({"product_list": product_list, "message": "SUCCESS"}, status=200)
+        
+        except KeyError :
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 class ProductSearchView(View):
     def get(self, request):
         try:
