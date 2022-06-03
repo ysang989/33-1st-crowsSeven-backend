@@ -32,7 +32,7 @@ class OrderView(View):
             recipient           = data["recipient"]
             receive_phonenumber = data["receive_phonenumber"]
             delivery_message    = data["delivery_message"]
-            selected_cart_ids   = data["select_cart_ids"]
+            selected_cart_ids   = data["selected_product_ids"]
 
             with transaction.atomic():
                 address = PresentDeliveryAddress.objects.create(
@@ -49,7 +49,7 @@ class OrderView(View):
                     order_status             = OrderStatus.objects.get(status ="주문완료"),
                     present_delivery_address = address,
                     shopping_fee             = shopping_fee,
-                    paymentmethod            = PaymentMethod.objects.get(payment = paymentmethod)
+                    paymentmethod            = PaymentMethod.objects.get(id = paymentmethod)
                 )
 
                 for selected_cart_id in selected_cart_ids:
@@ -60,11 +60,17 @@ class OrderView(View):
                         shipping_company  = "cj",
                         shipping_number   = uuid.uuid4(),
                         count             = cart_item.count,
-                        order_item_status = OrderItemStatus.objects.get(item_status = "입금전"),
+                        order_item_status = OrderItemStatus.objects.get(item_status = "주문완료"),
                     )
                     cart_item.delete()
 
-            return JsonResponse({'message' : "success"}, status=200)
+                    results=[]
+                    results=[{
+                        "order_count" : order.order_number,
+                        "order_item"  : order.created_at 
+                    }]
+
+            return JsonResponse({'message' : results}, status=200)
 
         except Cart.DoesNotExist:
             return JsonResponse({"message" : "CART_NOT_EXISTED"}, status=400)

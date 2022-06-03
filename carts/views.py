@@ -1,5 +1,6 @@
 import datetime
 import json
+from select import select
 
 from django.views    import View
 from django.http     import JsonResponse
@@ -18,7 +19,7 @@ class CartView(View):
             count               = data["count"]
             selected_product_id = data["option_product_id"]
             
-            cart_products = Cart.objects.select_related('option_product').filter(user_id = request.user)
+            selected_product_id = OptionProduct.objects.get(id=selected_product_id)
             cart, created  = Cart.objects.get_or_create(
 
                     user            = user,
@@ -30,12 +31,12 @@ class CartView(View):
                 cart.count += int(count)
                 cart.save()
                
-            return JsonResponse({'message' : "success"}, status=201)
+            return JsonResponse({'message' : "SUCCESS"}, status=201)
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
-    @login_decorator
+    # @login_decorator
     def delete(self, request, cart_id):
         try:
             cart = Cart.objects.get(id = cart_id)
@@ -79,7 +80,7 @@ class CartView(View):
             
             cart_products = Cart.objects.select_related('option_product').filter(user_id = request.user.id)
             
-            data = [{
+            results = [{
                     'id'     : cart_product.id,
                     'product': cart_product.option_product.product.thumbnail_image_url,
                     'info'   : cart_product.option_product.product.name,
@@ -88,7 +89,7 @@ class CartView(View):
                     
                 } for cart_product in cart_products]
 
-            return JsonResponse({'results' : data}, status=200)
+            return JsonResponse({'results' : results}, status=200)
 
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
