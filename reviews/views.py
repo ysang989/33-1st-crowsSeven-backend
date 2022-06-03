@@ -156,10 +156,8 @@ class ReviewView(View):
             title      = data["title"]
             context    = data["context"]
             password   = data["password"]
-
             if Review.objects.filter(product_id=product_id , user_id = request.user).exists():
                 return JsonResponse({'message':'REVIEW_ALREADY_EXIST'}, status=404)
-            
             Review.objects.create(
                 user       = request.user,
                 title      = title,
@@ -168,12 +166,10 @@ class ReviewView(View):
                 view_count = 0,
                 product    = Product.objects.get(id=product_id),
             )
-
             return JsonResponse({"message" : "SUCCESS"}, status=201)
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
-class ReviewView(View):
     @login_decorator
     def delete(self, request, review_id):
         try:
@@ -191,10 +187,10 @@ class ReviewView(View):
 class WholeReviewView(View):
     def get(self, request):
         try:
-            limit         = int(request.GET.get('limit', 5))
-            offset        = int(request.GET.get('offset',0))
+            # limit         = int(request.GET.get('limit', 5))
+            # offset        = int(request.GET.get('offset',0))
 
-            reviews = Review.objects.order_by("-created_at")[offset:offset+limit]
+            reviews = Review.objects.order_by("-created_at")
 
             review_list =[{
                 "review_id"        : review.id,

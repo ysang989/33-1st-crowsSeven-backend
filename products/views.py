@@ -18,12 +18,11 @@ class ProductDetailView(View):
         try:
             product          = Product.objects.get(id=product_id)
             option_products  = OptionProduct.objects.filter(product_id=product_id)
+            # option_product   = option_products[0]
             option_existence = False if OptionProduct.objects.filter(Q(product_id=product_id) & Q(shoe_size_id=None) & Q(phone_type_id=None) & Q(airpot_type_id=None)) else True
-
             option_list = []
-            option_type = '' 
+            option_type = ''
             option_name = ''
-
             for option_product in option_products:
                 if option_product.shoe_size:
                     option_type = 'shoe_size'
@@ -32,7 +31,6 @@ class ProductDetailView(View):
                         'option_name' : option_name if option_name else None,
                         'stock'       : option_product.stock
                     })
-
                 elif option_product.phone_type:
                     option_type = 'phone_type'
                     option_name = option_product.phone_type.name
@@ -40,7 +38,6 @@ class ProductDetailView(View):
                         'option_name' : option_name if option_name else None,
                         'stock'       : option_product.stock
                     })
-
                 elif option_product.airpot_type:
                     option_type = 'airpot_type'
                     option_name = option_product.airpot_type.name
@@ -49,7 +46,6 @@ class ProductDetailView(View):
                         'stock'            : option_product.stock,
                         'option_product_id': option_product.id
                     })
-
             results={
                 'id'                  : product.id,
                 'name'                : product.name,
@@ -60,13 +56,11 @@ class ProductDetailView(View):
                 'option_type'         : option_type if option_type else None,
                 'option_list'         : option_list,
                 'option_existence'    : option_existence,
+                'option_product_id'   : option_product.id
             }
-           
             return JsonResponse({'results' : results}, status=200)
-
         except KeyError :
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
-
 class ProductListView(View):
     def get(self, request):
         try:
@@ -84,7 +78,7 @@ class ProductListView(View):
             if material:
                 q &= Q(material__name=material)
 
-            products   = Product.objects.filter(q).order_by(sort_method)
+            products   = Product.objects.filter(q).order_by(sort_method)                        
             
             product_list = {
                 "products": [{
